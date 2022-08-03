@@ -11,9 +11,10 @@ let wsChromeEndpointurl = getWsUrl().then(
   (result) => (wsChromeEndpointurl = result.data.webSocketDebuggerUrl)
 );
 const REVIEW_LINK =
-  "https://shopee.vn/user/purchase/order/112499841151547?type=3";
+  "https://shopee.vn/user/purchase/order/112247436115762?type=3";
 
 const DEFAULT_REVIEW_TEXT_BANK = [
+  "Chất lượng sản phẩm tuyệt vời ông mặt trời!! Đóng gói sản phẩm rất đẹp và chắc chắn! Rất đáng tiền.",
   "Sp tốt quá shop ơi. Giao hàng nhanh, sp gói rất kỹ k bị bể gì hết. Quá ưng 😚😚",
   "M rất hài lòng về cách phục vụ của shop, sản phẩm bị lỗi shop đổi trả miễn phí và tư vấn rất nhiệt tình. Cho shop 5 sao.",
   "Đóng gói sản phẩm rất kỹ và sản phẩm rất chất luợng tôi rất hài lòng về sản phẩm này tôi sẽ quay lại shop mua thêm những sản phâm khác và giới thiệu thêm nhiều bạn bè của tôi nữa.",
@@ -102,6 +103,31 @@ setTimeout(async () => {
   //   await el.click();
   // }
   // await page.waitForTimeout(2000);
+  const elImageDivArray = await page.evaluate(
+    'Array.from(document.querySelectorAll(".shopee-image__content")).map((el) => el.getAttribute("style"))'
+  );
+  const startLength = 'background-image: url("'.length;
+  const imageURLsList = elImageDivArray.map((el) =>
+    el.substring(startLength, el.length - 3)
+  );
+  console.log(imageURLsList.length);
+  const count = await page.$$(".q-E\\+ql");
+  console.log(count.length);
+  const elUploadArray = await page.$$("input[type=file][accept='image/*']");
+  let index = imageURLsList.length - elUploadArray.length;
+
+  const uploadImgUrl = imageURLsList[index];
+  console.log(imageURLsList.length);
+  console.log("expected coins: " + elUploadArray.length * 100);
+  const uploadAllFiles = async () => {
+    for (el of elUploadArray) {
+      let img_name = makeid(10) + ".jpg";
+      await download_image(imageURLsList[index++], img_name);
+      await el.uploadFile(img_name);
+      await fs.unlinkSync(img_name);
+    }
+  };
+  uploadAllFiles();
 
   // Add random reviews
   const elTextArray = await page.$$("div._0rMaIu > textarea.q-E\\+ql");
@@ -111,32 +137,11 @@ setTimeout(async () => {
     await el.type(chooseRandomFromBank(DEFAULT_REVIEW_TEXT_BANK));
   }
 
-  // const elImageDivArray = await page.evaluate(
-  //   'Array.from(document.querySelectorAll(".shopee-image__content")).map((el) => el.getAttribute("style"))'
-  // );
-  // const startLength = 'background-image: url("'.length;
-  // const imageURLsList = elImageDivArray.map((el) =>
-  //   el.substring(startLength, el.length - 3)
-  // );
-  // let index = imageURLsList.length / 2;
-  // const elUploadArray = await page.$$("input[type=file][accept='image/*']");
-  // const uploadImgUrl = imageURLsList[index];
-  // console.log("expected coins: " + elUploadArray.length * 100);
-  // const uploadAllFiles = async () => {
-  //   for (el of elUploadArray) {
-  //     let img_name = makeid(10) + ".jpg";
-  //     await download_image(imageURLsList[index++], img_name);
-  //     await el.uploadFile(img_name);
-  //     await fs.unlinkSync(img_name);
-  //   }
-  // };
-  // uploadAllFiles();
-
   // Add an image
-  const elImageArray = await page.$$("input[type=file]");
-  for (const el of elImageArray) {
-    await el.uploadFile(chooseRandomFromBank(imagesPathBank));
-  }
+  // const elImageArray = await page.$$("input[type=file]");
+  // for (const el of elImageArray) {
+  //   await el.uploadFile(chooseRandomFromBank(imagesPathBank));
+  // }
 
   await page.waitForTimeout(3000);
   await page.click(".shopee-popup-form__footer button[type='button']");
