@@ -11,7 +11,7 @@ let wsChromeEndpointurl = getWsUrl().then(
   (result) => (wsChromeEndpointurl = result.data.webSocketDebuggerUrl)
 );
 const REVIEW_LINK =
-  "https://shopee.vn/user/purchase/order/112499841151547?type=3";
+  "https://shopee.vn/user/purchase/order/114833305204462?type=3";
 
 const DEFAULT_REVIEW_TEXT_BANK = [
   "Sp tốt quá shop ơi. Giao hàng nhanh, sp gói rất kỹ k bị bể gì hết. Quá ưng 😚😚",

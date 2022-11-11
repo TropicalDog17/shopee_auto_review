@@ -11,7 +11,7 @@ let wsChromeEndpointurl = getWsUrl().then(
   (result) => (wsChromeEndpointurl = result.data.webSocketDebuggerUrl)
 );
 const REVIEW_LINK =
-  "https://shopee.vn/user/purchase/order/112247436115762?type=3";
+  "https://shopee.vn/user/purchase/order/118651414207583?type=3";
 
 const DEFAULT_REVIEW_TEXT_BANK = [
   "Chất lượng sản phẩm tuyệt vời ông mặt trời!! Đóng gói sản phẩm rất đẹp và chắc chắn! Rất đáng tiền.",
@@ -112,12 +112,12 @@ setTimeout(async () => {
   );
   console.log(imageURLsList.length);
   const count = await page.$$(".q-E\\+ql");
-  console.log(count.length);
+  console.log("text area count" + count.length);
   const elUploadArray = await page.$$("input[type=file][accept='image/*']");
   let index = imageURLsList.length - elUploadArray.length;
 
   const uploadImgUrl = imageURLsList[index];
-  console.log(imageURLsList.length);
+  console.log("Images count:" + imageURLsList.length);
   console.log("expected coins: " + elUploadArray.length * 100);
   const uploadAllFiles = async () => {
     for (el of elUploadArray) {
@@ -130,7 +130,9 @@ setTimeout(async () => {
   uploadAllFiles();
 
   // Add random reviews
-  const elTextArray = await page.$$("div._0rMaIu > textarea.q-E\\+ql");
+  const elTextArray = await page.$$(
+    "div._0rMaIu > div:last-child textarea.q-E\\+ql"
+  );
   // const elTextArray = await page.$$("div._0rMaIu > textarea");
   for (const el of elTextArray) {
     // await el.click();
